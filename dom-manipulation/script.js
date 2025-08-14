@@ -71,3 +71,27 @@ function showRandomQuote() {
 }
 
 newQuote.addEventListener("click", showRandomQuote);
+    function importFromJsonFile(event) {
+        const fileReader = new FileReader();
+        fileReader.onload = function(event) {
+        const importedQuotes = JSON.parse(event.target.result);
+        quotes = getFromLocalStorage();
+        quotes.push(...importedQuotes);
+        saveToLocalStorage(quotes);
+        renderQuotes();
+        alert('Quotes imported successfully!');
+        };
+        fileReader.readAsText(event.target.files[0]);
+    }
+    function exportToJsonFile() {
+    const dataStr = JSON.stringify(quotes, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "quotes.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}

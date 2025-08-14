@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Quote Generator</title>
     <style>
-
         body {
             font-family: Arial, sans-serif;
             background: #f4f4f9;
@@ -17,21 +16,24 @@
             align-items: center;
             min-height: 100vh;
         }
+
         h1 {
             margin-top: 40px;
             color: #333;
         }
+
         #quoteDisplay {
             margin: 30px 0;
             padding: 20px 30px;
             background: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
             min-width: 300px;
             min-height: 60px;
             font-size: 1.2em;
             color: #444;
         }
+
         #quoteDisplay li {
             margin-left: 20px;
             padding: 5px 0;
@@ -40,6 +42,7 @@
             justify-content: space-between;
             align-items: center;
         }
+
         #newQuote {
             background: #007bff;
             color: #fff;
@@ -51,17 +54,20 @@
             margin-bottom: 20px;
             transition: background 0.2s;
         }
+
         #newQuote:hover {
             background: #0056b3;
         }
-        div > input[type="text"] {
+
+        div>input[type="text"] {
             padding: 8px;
             margin: 0 5px 10px 0;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 1em;
         }
-        div > button {
+
+        div>button {
             background: #28a745;
             color: #fff;
             border: none;
@@ -71,10 +77,12 @@
             font-size: 1em;
             transition: background 0.2s;
         }
-        div > button:hover {
+
+        div>button:hover {
             background: #1e7e34;
         }
-        .delete-button{
+
+        .delete-button {
             background: #dc3545;
             color: #fff;
             border: none;
@@ -83,6 +91,23 @@
             cursor: pointer;
             font-size: 0.9em;
             margin-left: 10px;
+        }
+
+        .custom-file-upload ,.custom-file-downLoud {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #cf0e7f;
+            color: #fff;
+            box-shadow: 0 0 1rem  rgba(255, 0, 191, 0.849);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+            margin: 5px 0;
+        }
+        .custom-file-downLoud{
+            box-shadow: 0 0 1rem  rgba(156, 180, 16, 0.849);
+            background-color: #bbc415;
         }
     </style>
 </head>
@@ -97,6 +122,9 @@
         <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
         <button onclick="createAddQuoteForm()">Add Quote</button>
     </div>
+    <label for="importFile" class="custom-file-upload">📂 Import JSON File</label>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" hidden />
+    <label onclick="exportToJsonFile()" class="custom-file-downLoud">💾 Export JSON File</label>
     <script src="script.js"></script>
 </body>
 
