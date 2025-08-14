@@ -3,7 +3,7 @@ let newQuoteCategory = document.getElementById("newQuoteCategory")
 let quoteDisplay = document.getElementById("quoteDisplay")
 let newQuote = document.getElementById("newQuote")
 let quots= [];
-function addQuote() {
+function createAddQuoteForm() {
     console.log(quots) 
     let quotText = newQuoteText.value.trim();
     let quotCategory = newQuoteCategory.value.trim();
