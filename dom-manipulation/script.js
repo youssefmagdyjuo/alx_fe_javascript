@@ -111,11 +111,11 @@ populateCategories()
 function filterQuotes(e){
 let value = e.target.value
 let allQuotes = getFromLocalStorage()
-let categoryChosien= allQuotes.filter(q=>{
+let selectedCategory= allQuotes.filter(q=>{
     return q.category == value
 })
 quoteDisplay.innerHTML=''
-    categoryChosien.forEach((quote ,index) => {
+    selectedCategory.forEach((quote ,index) => {
         let li = document.createElement("li");
         li.innerHTML = `<div><strong>Quote:</strong> ${quote.text}<br><strong>Category:</strong> ${quote.category}</div>`;
         let deleteButton = document.createElement("button");
