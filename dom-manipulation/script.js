@@ -3,7 +3,7 @@ let newQuoteCategory = document.getElementById("newQuoteCategory");
 let quoteDisplay = document.getElementById("quoteDisplay");
 let newQuote = document.getElementById("newQuote");
 let quotes = [];
-
+let categoryFilter = document.getElementById("categoryFilter");
 function getFromLocalStorage() {
     return JSON.parse(localStorage.getItem("quotes")) || [];
 }
@@ -41,7 +41,7 @@ function renderQuotes() {
 
     quotes.forEach((quote ,index) => {
         let li = document.createElement("li");
-        li.innerHTML = `<strong>Quote:</strong> ${quote.text}<br><strong>Category:</strong> ${quote.category}`;
+        li.innerHTML = `<div><strong>Quote:</strong> ${quote.text}<br><strong>Category:</strong> ${quote.category}</div>`;
         let deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         li.appendChild(deleteButton);
@@ -66,7 +66,7 @@ function showRandomQuote() {
 
     quoteDisplay.innerHTML = "";
     let li = document.createElement("li");
-    li.innerHTML = `<strong>Quote:</strong> ${randomQuote.text}<br><strong>Category:</strong> ${randomQuote.category}`;
+    li.innerHTML = `<div><strong>Quote:</strong> ${randomQuote.text}<br><strong>Category:</strong> ${randomQuote.category}</div>`;
     quoteDisplay.appendChild(li);
 }
 
@@ -94,4 +94,42 @@ newQuote.addEventListener("click", showRandomQuote);
     a.click();
 
     URL.revokeObjectURL(url);
+}
+// filter 
+function populateCategories (){
+    let allQuotes = getFromLocalStorage()
+    let allCategories =[... new Set(allQuotes.map(c=> c.category))]
+    allCategories.forEach((q) =>{
+        let option = document.createElement('option');
+        option.innerHTML =q
+        option.value= q
+        categoryFilter.appendChild(option)
+    })
+}
+populateCategories()
+
+function filterQuotes(e){
+let value = e.target.value
+let allQuotes = getFromLocalStorage()
+let categoryChosien= allQuotes.filter(q=>{
+    return q.category == value
+})
+quoteDisplay.innerHTML=''
+    categoryChosien.forEach((quote ,index) => {
+        let li = document.createElement("li");
+        li.innerHTML = `<div><strong>Quote:</strong> ${quote.text}<br><strong>Category:</strong> ${quote.category}</div>`;
+        let deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        li.appendChild(deleteButton);
+        deleteButton.classList.add("delete-button");
+        deleteButton.addEventListener("click", () => {    
+            allQuotes= allQuotes.filter(q=>{
+                return q.text !== quote.text
+            })        
+            console.log(allQuotes)
+            saveToLocalStorage(allQuotes);
+            filterQuotes ({ target: { value: value } });
+        });
+        quoteDisplay.appendChild(li);
+    });
 }
