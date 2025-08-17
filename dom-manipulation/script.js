@@ -167,6 +167,7 @@ async function fetchQuotesFromServer() {
         saveToLocalStorage(mergedQuotes);
         renderQuotes();
         console.log("✅ Synced with server");
+        alert("Quotes synced with server!")
     } catch (error) {
         console.error("❌ Error fetching quotes from server:", error);
     }
