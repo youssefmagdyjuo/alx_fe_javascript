@@ -189,6 +189,8 @@ async function postQuoteToServer(quote) {
         console.error("❌ Error posting quote:", error);
     }
 }
-
+function syncQuotes(){
+fetchQuotesFromServer
+}
+setInterval(syncQuotes, 10000);
 // run sync every 10 sec
-setInterval(fetchQuotesFromServer, 10000);
