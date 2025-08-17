@@ -1,4 +1,3 @@
-// Existing variables
 let newQuoteText = document.getElementById("newQuoteText");
 let newQuoteCategory = document.getElementById("newQuoteCategory");
 let quoteDisplay = document.getElementById("quoteDisplay");
@@ -6,18 +5,16 @@ let newQuote = document.getElementById("newQuote");
 let quotes = [];
 let categoryFilter = document.getElementById("categoryFilter");
 
-// Mock server API (JSONPlaceholder)
-const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Mock server
 
-// ==================== Local Storage ====================
 function getFromLocalStorage() {
     return JSON.parse(localStorage.getItem("quotes")) || [];
 }
+
 function saveToLocalStorage(quotes) {
     localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
-// ==================== Add Quote ====================
 function createAddQuoteForm() {
     let quotText = newQuoteText.value.trim();
     let quotCategory = newQuoteCategory.value.trim();
@@ -28,23 +25,17 @@ function createAddQuoteForm() {
     }
 
     let quote = {
-        id: Date.now(), // unique ID
         text: quotText,
         category: quotCategory
     };
 
     quotes.push(quote);
     saveToLocalStorage(quotes);
-
-    // Send to server
-    addQuoteToServer(quote);
-
     newQuoteText.value = "";
     newQuoteCategory.value = "";
     renderQuotes();
 }
 
-// ==================== Render Quotes ====================
 function renderQuotes() {
     quotes = getFromLocalStorage();
     quoteDisplay.innerHTML = "";
@@ -54,43 +45,40 @@ function renderQuotes() {
         return;
     }
 
-    quotes.forEach((quote ,index) => {
+    quotes.forEach((quote, index) => {
         let li = document.createElement("li");
         li.innerHTML = `<div><strong>Quote:</strong> ${quote.text}<br><strong>Category:</strong> ${quote.category}</div>`;
-        
         let deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         li.appendChild(deleteButton);
         deleteButton.classList.add("delete-button");
-        
         deleteButton.addEventListener("click", () => {
             quotes.splice(index, 1);
             saveToLocalStorage(quotes);
-            deleteQuoteFromServer(quote.id);
             renderQuotes();
         });
-
         quoteDisplay.appendChild(li);
     });
 }
 renderQuotes();
 
-// ==================== Random Quote ====================
 function showRandomQuote() {
     if (quotes.length === 0) {
         alert("No quotes available.");
         return;
     }
+
     let randomIndex = Math.floor(Math.random() * quotes.length);
     let randomQuote = quotes[randomIndex];
+
     quoteDisplay.innerHTML = "";
     let li = document.createElement("li");
     li.innerHTML = `<div><strong>Quote:</strong> ${randomQuote.text}<br><strong>Category:</strong> ${randomQuote.category}</div>`;
     quoteDisplay.appendChild(li);
 }
+
 newQuote.addEventListener("click", showRandomQuote);
 
-// ==================== Import / Export ====================
 function importFromJsonFile(event) {
     const fileReader = new FileReader();
     fileReader.onload = function(event) {
@@ -99,10 +87,11 @@ function importFromJsonFile(event) {
         quotes.push(...importedQuotes);
         saveToLocalStorage(quotes);
         renderQuotes();
-        alert('Quotes imported successfully!');
+        alert("Quotes imported successfully!");
     };
     fileReader.readAsText(event.target.files[0]);
 }
+
 function exportToJsonFile() {
     const dataStr = JSON.stringify(quotes, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
@@ -116,75 +105,72 @@ function exportToJsonFile() {
     URL.revokeObjectURL(url);
 }
 
-// ==================== Filter ====================
-function populateCategories (){
-    let allQuotes = getFromLocalStorage()
-    let allCategories =[... new Set(allQuotes.map(c=> c.category))]
-    allCategories.forEach((q) =>{
-        let option = document.createElement('option');
-        option.innerHTML =q
-        option.value= q
-        categoryFilter.appendChild(option)
-    })
+// filter 
+function populateCategories() {
+    let allQuotes = getFromLocalStorage();
+    let allCategories = [...new Set(allQuotes.map(c => c.category))];
+    allCategories.forEach((q) => {
+        let option = document.createElement("option");
+        option.innerHTML = q;
+        option.value = q;
+        categoryFilter.appendChild(option);
+    });
 }
-populateCategories()
+populateCategories();
 
-function filterQuotes(e){
-    let value = e.target.value
-    let allQuotes = getFromLocalStorage()
-    let selectedCategory= allQuotes.filter(q=> q.category == value)
-
-    quoteDisplay.innerHTML=''
-    selectedCategory.forEach((quote ,index) => {
+function filterQuotes(e) {
+    let value = e.target.value;
+    let allQuotes = getFromLocalStorage();
+    let selectedCategory = allQuotes.filter(q => {
+        return q.category == value;
+    });
+    quoteDisplay.innerHTML = "";
+    selectedCategory.forEach((quote, index) => {
         let li = document.createElement("li");
         li.innerHTML = `<div><strong>Quote:</strong> ${quote.text}<br><strong>Category:</strong> ${quote.category}</div>`;
-        
         let deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         li.appendChild(deleteButton);
         deleteButton.classList.add("delete-button");
-
-        deleteButton.addEventListener("click", () => {    
-            allQuotes= allQuotes.filter(q=> q.text !== quote.text)        
+        deleteButton.addEventListener("click", () => {
+            allQuotes = allQuotes.filter(q => {
+                return q.text !== quote.text;
+            });
+            console.log(allQuotes);
             saveToLocalStorage(allQuotes);
-            filterQuotes ({ target: { value: value } });
+            filterQuotes({ target: { value: value } });
         });
         quoteDisplay.appendChild(li);
     });
 }
 
-// ==================== Server Sync ====================
+// ==================== Fetch Quotes From Server ====================
+async function fetchQuotesFromServer() {
+    try {
+        let response = await fetch(SERVER_URL);
+        let data = await response.json();
 
-// Fetch all quotes from server
-async function syncQuotes() {
-    let response = await fetch(SERVER_URL);
-    let data = await response.json();
-
-    // Conflict resolution: server takes precedence
-    if (data && data.length > 0) {
-        saveToLocalStorage(data.map(d => ({
-            id: d.id,
-            text: d.title || d.text,
-            category: "General" // fallback category
-        })));
-        alert("Quotes synced from server!");
-        renderQuotes();
+        // Conflict resolution: server data takes precedence
+        if (data && data.length > 0) {
+            saveToLocalStorage(
+                data.map(d => ({
+                    id: d.id,
+                    text: d.title || d.text,
+                    category: "General"
+                }))
+            );
+            console.log("✅ Quotes synced with server");
+            renderQuotes();
+        }
+    } catch (error) {
+        console.error("❌ Error syncing quotes:", error);
     }
 }
 
-// Add new quote to server
-async function addQuoteToServer(quote) {
-    await fetch(SERVER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(quote)
-    });
+// optional alias
+function syncQuotes() {
+    fetchQuotesFromServer();
 }
 
-// Delete quote from server
-async function deleteQuoteFromServer(id) {
-    await fetch(`${SERVER_URL}/${id}`, { method: "DELETE" });
-}
-
-// Sync every 30s
-setInterval(syncQuotes, 30000);
+// run sync every 30s
+setInterval(fetchQuotesFromServer, 30000);
