@@ -156,7 +156,7 @@ function filterQuotes(e){
 // ==================== Server Sync ====================
 
 // Fetch all quotes from server
-async function fetchQuotesFromServer() {
+async function syncQuotes() {
     let response = await fetch(SERVER_URL);
     let data = await response.json();
 
@@ -187,4 +187,4 @@ async function deleteQuoteFromServer(id) {
 }
 
 // Sync every 30s
-setInterval(fetchQuotesFromServer, 30000);
+setInterval(syncQuotes, 30000);
