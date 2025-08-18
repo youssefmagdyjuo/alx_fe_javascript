@@ -194,9 +194,9 @@ async function postQuoteToServer(quote) {
 }
 function clearAllQuotes() {
     if (confirm("Are you sure you want to delete all quotes?")) {
-        localStorage.removeItem("quotes"); // مسح من localStorage
-        quotes = []; // تفضية المصفوفة
-        renderQuotes(); // تحديث العرض
+        localStorage.removeItem("quotes"); 
+        quotes = []; 
+        renderQuotes();
         headerTitle.innerHTML = " ( 0 ) ";
         alert("All quotes have been deleted!");
     }
