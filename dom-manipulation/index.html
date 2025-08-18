@@ -9,9 +9,7 @@
 </head>
 
 <body>
-    <h1>Dynamic Quote Generator</h1>
-    <div id="quoteDisplay">
-    </div>
+    <h1>Dynamic Quote Generator <span id="headerTitle"></span></h1>
     <button id="newQuote">Show Random Quote</button>
     <select id="categoryFilter" onchange="filterQuotes(event)">
         <option value="all">All Categories</option>
@@ -25,6 +23,9 @@
     <label for="importFile" class="custom-file-upload">Import JSON File</label>
     <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" hidden />
     <label onclick="exportToJsonFile()" class="custom-file-downLoud">Export Quotes</label>
+    <button class="deleteAll" onclick="clearAllQuotes()">Clear All Quotes</button>
+    <div id="quoteDisplay">
+    </div>
     <script src="script.js"></script>
 </body>
 

@@ -4,12 +4,13 @@ let quoteDisplay = document.getElementById("quoteDisplay");
 let newQuote = document.getElementById("newQuote");
 let quotes = [];
 let categoryFilter = document.getElementById("categoryFilter");
-
+let headerTitle = document.getElementById('headerTitle')
 const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Mock API
 
 // ==================== Local Storage ====================
 function getFromLocalStorage() {
     return JSON.parse(localStorage.getItem("quotes")) || [];
+    
 }
 function saveToLocalStorage(quotes) {
     localStorage.setItem("quotes", JSON.stringify(quotes));
@@ -39,12 +40,17 @@ function createAddQuoteForm() {
     newQuoteCategory.value = "";
     renderQuotes();
 }
-
+const syncQuotes = setInterval(fetchQuotesFromServer, 5000);
 // ==================== Render Quotes ====================
 function renderQuotes() {
-    quotes = getFromLocalStorage();
-    quoteDisplay.innerHTML = "";
+    let qoutsLength = getFromLocalStorage().length;
+    if (qoutsLength > 250) {
+        clearInterval(syncQuotes)
+    }
 
+    quotes = getFromLocalStorage();
+    headerTitle.innerHTML = " ( "+quotes.length+" ) "
+    quoteDisplay.innerHTML = "";
     if (quotes.length === 0) {
         quoteDisplay.innerHTML = "<li>No quotes available.</li>";
         return;
@@ -64,6 +70,8 @@ function renderQuotes() {
         });
         quoteDisplay.appendChild(li);
     });
+
+
 }
 renderQuotes() ;
 
@@ -83,7 +91,6 @@ function showRandomQuote() {
     quoteDisplay.appendChild(li);
 }
 newQuote.addEventListener("click", showRandomQuote);
-
 // ==================== Import / Export ====================
 function importFromJsonFile(event) {
     const fileReader = new FileReader();
@@ -109,7 +116,6 @@ function exportToJsonFile() {
 
     URL.revokeObjectURL(url);
 }
-
 // ==================== Filter by Category ====================
 function populateCategories (){
     let allQuotes = getFromLocalStorage()
@@ -122,7 +128,6 @@ function populateCategories (){
     })
 }
 populateCategories()
-
 function filterQuotes(e){
     let value = e.target.value
     let allQuotes = getFromLocalStorage()
@@ -148,31 +153,28 @@ function filterQuotes(e){
         quoteDisplay.appendChild(li);
     });
 }
-
+headerTitle.innerHTML = " ( "+getFromLocalStorage().length+" ) "
 // ==================== Sync With Server ====================
 async function fetchQuotesFromServer() {
     try {
         let response = await fetch(SERVER_URL);
         let serverQuotes = await response.json();
-
-        // هنا بنضيف شوية Quotes Mock لأن JSONPlaceholder بيرجع Posts مش Quotes
+        
         let formattedQuotes = serverQuotes.slice(0, 5).map(post => ({
             text: post.title,
             category: "Server",
             timestamp: Date.now()
         }));
-
+        
         let localQuotes = getFromLocalStorage();
         let mergedQuotes = [...localQuotes, ...formattedQuotes];
         saveToLocalStorage(mergedQuotes);
         renderQuotes();
-        console.log("✅ Synced with server");
-        alert("Quotes synced with server!")
+        console.log("✅ Synced with server");        
     } catch (error) {
         console.error("❌ Error fetching quotes from server:", error);
     }
 }
-
 // ==================== Post to Server ====================
 async function postQuoteToServer(quote) {
     try {
@@ -190,8 +192,14 @@ async function postQuoteToServer(quote) {
         console.error("❌ Error posting quote:", error);
     }
 }
-function syncQuotes(){
-fetchQuotesFromServer
+function clearAllQuotes() {
+    if (confirm("Are you sure you want to delete all quotes?")) {
+        localStorage.removeItem("quotes"); // مسح من localStorage
+        quotes = []; // تفضية المصفوفة
+        renderQuotes(); // تحديث العرض
+        headerTitle.innerHTML = " ( 0 ) ";
+        alert("All quotes have been deleted!");
+    }
 }
-setInterval(syncQuotes, 10000);
-// run sync every 10 sec
+
+    

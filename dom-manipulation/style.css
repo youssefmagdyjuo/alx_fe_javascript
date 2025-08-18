@@ -1,3 +1,8 @@
+*{
+    text-decoration: none;
+    list-style: none;
+    border: none;
+}
 body {
             font-family: Arial, sans-serif;
             background: #f4f4f9;
@@ -93,21 +98,21 @@ body {
         }
 
         .custom-file-upload,
-        .custom-file-downLoud {
+        .custom-file-downLoud,.deleteAll {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 10px 0;
             cursor: pointer;
             background-color: #cf0e7f;
             color: #fff;
-            /* box-shadow: 0 0 1rem rgba(255, 0, 191, 0.849); */
             border-radius: 6px;
             font-size: 14px;
-            transition: background 0.3s ease;
             margin: 5px 0;
-            width: 10rem;
+            width: 15rem ;
             text-align: center;
         }
-
+        .deleteAll{
+            background-color: #dc3545;
+        }
         .custom-file-downLoud {
             /* box-shadow: 0 0 1rem rgba(156, 180, 16, 0.849); */
             background-color: #bbc415;
